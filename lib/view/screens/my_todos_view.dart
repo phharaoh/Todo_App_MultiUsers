@@ -6,8 +6,19 @@ import 'package:to_do_app/controller/task_state.dart';
 import 'package:to_do_app/view/screens/add_task.dart';
 import 'package:to_do_app/view/screens/auth_view.dart';
 
-class MyTaskView extends StatelessWidget {
+class MyTaskView extends StatefulWidget {
   const MyTaskView({super.key});
+
+  @override
+  State<MyTaskView> createState() => _MyTaskViewState();
+}
+
+class _MyTaskViewState extends State<MyTaskView> {
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<TaskCubit>(context).loadData();
+  }
 
   @override
   Widget build(BuildContext context) {

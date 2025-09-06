@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:to_do_app/model/task_model.dart';
-import 'package:to_do_app/helper/cache_helper.dart';
 import 'package:to_do_app/controller/task_state.dart';
 import 'package:to_do_app/controller/task_cubit.dart';
 
@@ -64,6 +63,8 @@ class AddTask extends StatelessWidget {
               ),
             );
           }
+          BlocProvider.of<TaskCubit>(context).title.clear();
+          BlocProvider.of<TaskCubit>(context).description.clear();
           Navigator.of(context).pop();
         },
         style: ElevatedButton.styleFrom(
