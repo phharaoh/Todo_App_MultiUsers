@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_app/view/screens/my_todos_view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:to_do_app/controller/task_cubit.dart';
+import 'package:to_do_app/controller/task_state.dart';
 
 class AuthView extends StatelessWidget {
   const AuthView({super.key});
@@ -29,43 +31,52 @@ class AuthView extends StatelessWidget {
                 style: TextStyle(color: Colors.grey),
               ),
               const SizedBox(height: 30),
-              TextField(
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.email_outlined),
-                  labelText: "Email",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+              BlocBuilder<TaskCubit, TaskState>(
+                builder: (context, state) {
+                  return Form(
+                    key: BlocProvider.of<TaskCubit>(context).formKey,
+                    child: aurhField(context),
+                  );
+                },
               ),
               const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    //TODO: Implement authentication logic
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => const MyTaskView(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    "Login",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+              BlocBuilder<TaskCubit, TaskState>(
+                builder: (context, state) {
+                  return loginBtn(context);
+                },
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  SizedBox loginBtn(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          BlocProvider.of<TaskCubit>(context).authBtnLogic(context);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue,
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        child: const Text("Login", style: TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
+  TextFormField aurhField(context) {
+    return TextFormField(
+      controller: BlocProvider.of<TaskCubit>(context).userEmail,
+      validator: (value) => value!.isEmpty ? "Enter your email" : null,
+      decoration: InputDecoration(
+        prefixIcon: const Icon(Icons.email_outlined),
+        labelText: "Email",
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }

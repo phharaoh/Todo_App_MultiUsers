@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:to_do_app/model/task_model.dart';
+import 'package:to_do_app/helper/cache_helper.dart';
 import 'package:to_do_app/controller/task_state.dart';
 import 'package:to_do_app/controller/task_cubit.dart';
 
@@ -30,16 +31,15 @@ class AddTask extends StatelessWidget {
               listener: (context, state) {
                 if (state is TaskAdded) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Task Added Successfully")),
+                    const SnackBar(
+                      content: Text("Task Added Successfully"),
+                      backgroundColor: Colors.green,
+                    ),
                   );
                 }
               },
               builder: (context, state) {
-                if (state is Loading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else {
-                  return saveBtn(context);
-                }
+                return saveBtn(context);
               },
             ),
           ],

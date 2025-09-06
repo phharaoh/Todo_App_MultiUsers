@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:to_do_app/model/task_model.dart';
 import 'package:to_do_app/controller/task_cubit.dart';
 import 'package:to_do_app/controller/task_state.dart';
 import 'package:to_do_app/view/screens/add_task.dart';
+import 'package:to_do_app/view/screens/auth_view.dart';
 
 class MyTaskView extends StatelessWidget {
   const MyTaskView({super.key});
@@ -12,9 +14,21 @@ class MyTaskView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("My Todos"),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))],
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => AuthView()),
+                (route) => false,
+              );
+            },
+            icon: const Icon(Icons.logout),
+          ),
+        ],
       ),
-      body: BlocBuilder<TaskCubit, TaskState>(
+      body: BlocConsumer<TaskCubit, TaskState>(
+        listener: (context, state) {},
         builder: (context, state) {
           return BlocProvider.of<TaskCubit>(context).tasks.isEmpty
               ? Center(
@@ -24,9 +38,43 @@ class MyTaskView extends StatelessWidget {
                   ),
                 )
               : ListView.builder(
-                  itemCount: 10,
+                  itemCount: BlocProvider.of<TaskCubit>(context).tasks.length,
                   itemBuilder: (context, index) {
-                    return _buildTodoItem("Task ${index + 1}", index % 2 == 0);
+                    final task = BlocProvider.of<TaskCubit>(
+                      context,
+                    ).tasks[index];
+                    return ListTile(
+                      //!
+                      leading: Checkbox(
+                        value: task.isChecked,
+                        onChanged: (_) {
+                          BlocProvider.of<TaskCubit>(
+                            context,
+                          ).changeStatus(task);
+                        },
+                      ),
+                      //!
+                      title: Text(
+                        task.title,
+                        style: TextStyle(
+                          decoration: task.isChecked
+                              ? TextDecoration.lineThrough
+                              : null,
+                        ),
+                      ),
+                      //!
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          BlocProvider.of<TaskCubit>(context).deleteTask(
+                            TaskModel(
+                              title: task.title,
+                              description: task.description,
+                            ),
+                          );
+                        },
+                      ),
+                    );
                   },
                 );
         },
@@ -39,25 +87,6 @@ class MyTaskView extends StatelessWidget {
         },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
-      ),
-    );
-  }
-
-  Widget _buildTodoItem(String title, bool completed) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 5),
-      child: ListTile(
-        leading: Checkbox(value: completed, onChanged: (_) {}),
-        title: Text(
-          title,
-          style: TextStyle(
-            decoration: completed ? TextDecoration.lineThrough : null,
-          ),
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete, color: Colors.red),
-          onPressed: () {},
-        ),
       ),
     );
   }
