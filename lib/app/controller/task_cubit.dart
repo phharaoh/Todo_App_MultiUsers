@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:to_do_app/model/task_model.dart';
-import 'package:to_do_app/helper/cache_helper.dart';
-import 'package:to_do_app/controller/task_state.dart';
-import 'package:to_do_app/view/screens/my_todos_view.dart';
+import 'package:to_do_app/app/model/task_model.dart';
+import 'package:to_do_app/app/helper/cache_helper.dart';
+import 'package:to_do_app/app/controller/task_state.dart';
+import 'package:to_do_app/app/view/screens/my_todos_view.dart';
 
 class TaskCubit extends Cubit<TaskState> {
   TaskCubit() : super(Initial());
@@ -34,7 +34,7 @@ class TaskCubit extends Cubit<TaskState> {
         return TaskModel(title: map['title'], description: map['description']);
       }).toList();
     }
-    print('${CacheHelper().getData(key: 'tasks')}');
+    // print('${CacheHelper().getData(key: 'tasks')}');
   }
 
   void deleteTask(TaskModel task) {

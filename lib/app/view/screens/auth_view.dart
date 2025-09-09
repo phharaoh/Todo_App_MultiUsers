@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:to_do_app/controller/task_cubit.dart';
-import 'package:to_do_app/controller/task_state.dart';
+import 'package:to_do_app/app/controller/task_cubit.dart';
+import 'package:to_do_app/app/controller/task_state.dart';
 
 class AuthView extends StatelessWidget {
   const AuthView({super.key});

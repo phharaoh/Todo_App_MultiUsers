@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:to_do_app/model/task_model.dart';
-import 'package:to_do_app/controller/task_cubit.dart';
-import 'package:to_do_app/controller/task_state.dart';
-import 'package:to_do_app/view/screens/add_task.dart';
-import 'package:to_do_app/view/screens/auth_view.dart';
+import 'package:to_do_app/app/model/task_model.dart';
+import 'package:to_do_app/app/controller/task_cubit.dart';
+import 'package:to_do_app/app/controller/task_state.dart';
+import 'package:to_do_app/app/view/screens/add_task.dart';
+import 'package:to_do_app/app/view/screens/auth_view.dart';
 
 class MyTaskView extends StatefulWidget {
   const MyTaskView({super.key});
@@ -26,7 +26,12 @@ class _MyTaskViewState extends State<MyTaskView> {
       appBar: AppBar(
         title: const Text("My Todos"),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+          IconButton(
+            onPressed: () {
+              showSearch(context: context, delegate: _TaskSearchDelegate());
+            },
+            icon: const Icon(Icons.search),
+          ),
           IconButton(
             onPressed: () {
               Navigator.of(context).pushAndRemoveUntil(
@@ -99,6 +104,90 @@ class _MyTaskViewState extends State<MyTaskView> {
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
       ),
+    );
+  }
+}
+
+class _TaskSearchDelegate extends SearchDelegate<String> {
+  List<TaskModel> _filterTasks(BuildContext context) {
+    final tasks = BlocProvider.of<TaskCubit>(context, listen: false).tasks;
+    final q = query.trim().toLowerCase();
+    if (q.isEmpty) return tasks;
+    return tasks.where((t) {
+      return t.title.toLowerCase().contains(q) ||
+          t.description.toLowerCase().contains(q);
+    }).toList();
+  }
+
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      if (query.isNotEmpty)
+        IconButton(icon: const Icon(Icons.clear), onPressed: () => query = ''),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () => close(context, ''),
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    final results = _filterTasks(context);
+    if (results.isEmpty) {
+      return const Center(child: Text('No matching tasks'));
+    }
+    return ListView.builder(
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        final task = results[index];
+        return ListTile(
+          title: Text(task.title),
+          subtitle: Text(task.description),
+          leading: Checkbox(
+            value: task.isChecked,
+            onChanged: (_) {
+              BlocProvider.of<TaskCubit>(
+                context,
+                listen: false,
+              ).changeStatus(task);
+            },
+          ),
+          trailing: IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: () {
+              BlocProvider.of<TaskCubit>(context, listen: false).deleteTask(
+                TaskModel(title: task.title, description: task.description),
+              );
+              // Refresh results after deletion
+              showResults(context);
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestions = _filterTasks(context);
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        final task = suggestions[index];
+        return ListTile(
+          title: Text(task.title),
+          subtitle: Text(task.description),
+          onTap: () {
+            query = task.title;
+            showResults(context);
+          },
+        );
+      },
     );
   }
 }

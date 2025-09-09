@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:to_do_app/controller/task_cubit.dart';
-import 'package:to_do_app/view/screens/auth_view.dart';
+import 'package:to_do_app/app/controller/task_cubit.dart';
+import 'package:to_do_app/app/view/screens/auth_view.dart';
 
 void main() {
   runApp(const MyApp());
