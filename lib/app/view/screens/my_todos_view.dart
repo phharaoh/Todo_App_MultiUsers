@@ -21,6 +21,12 @@ class _MyTaskViewState extends State<MyTaskView> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    BlocProvider.of<TaskCubit>(context).close();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
