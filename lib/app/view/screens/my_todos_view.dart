@@ -4,7 +4,6 @@ import 'package:to_do_app/app/model/task_model.dart';
 import 'package:to_do_app/app/controller/task_cubit.dart';
 import 'package:to_do_app/app/controller/task_state.dart';
 import 'package:to_do_app/app/view/screens/add_task.dart';
-import 'package:to_do_app/app/view/screens/auth_view.dart';
 
 class MyTaskView extends StatefulWidget {
   const MyTaskView({super.key});
@@ -39,11 +38,8 @@ class _MyTaskViewState extends State<MyTaskView> {
             icon: const Icon(Icons.search),
           ),
           IconButton(
-            onPressed: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => AuthView()),
-                (route) => false,
-              );
+            onPressed: () async {
+              BlocProvider.of<TaskCubit>(context).logout(context);
             },
             icon: const Icon(Icons.logout),
           ),
